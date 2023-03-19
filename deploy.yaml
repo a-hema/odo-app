@@ -36,3 +36,28 @@ ports:
     targetPort: 3001
 selector:
   app: nodejs-app
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: demo
+  labels:
+    app: app
+    app.kubernetes.io/instance: nodejs
+    app.kubernetes.io/managed-by: odo
+    app.kubernetes.io/managed-by-version: v3.8.0
+    app.kubernetes.io/part-of: app
+    app.openshift.io/runtime: node.js
+    component: nodejs
+    odo.dev/mode: Dev
+  annotations:
+    openshift.io/host.generated: 'true'
+spec:
+  host: demo-odo-app.apps-crc.testing
+  to:
+    kind: Service
+    name: nodejs-app
+    weight: 100
+  port:
+    targetPort: http-node
+  wildcardPolicy: None
