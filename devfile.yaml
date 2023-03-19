@@ -55,16 +55,16 @@ metadata:
   displayName: Node.js Runtime
   icon: https://nodejs.org/static/images/logos/nodejs-new-pantone-black.svg
   language: JavaScript
-  name: sample-app
+  name: odo-app
   projectType: Node.js
   tags:
   - Node.js
-  - Express
+  - odo
   - ubi8
   version: 2.1.1
 schemaVersion: 2.1.0
 starterProjects:
 - git:
     remotes:
-      origin: https://github.com/odo-devfiles/nodejs-ex.git
+      origin: https://github.com/a-hema/odo-app.git
   name: nodejs-starter
