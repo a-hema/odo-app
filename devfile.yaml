@@ -1,70 +1,53 @@
-commands:
-- exec:
-    commandLine: npm install
-    component: runtime
-    group:
-      isDefault: true
-      kind: build
-    workingDir: ${PROJECT_SOURCE}
-  id: install
-- exec:
-    commandLine: npm start
-    component: runtime
-    group:
-      isDefault: true
-      kind: run
-    workingDir: ${PROJECT_SOURCE}
-  id: run
-- exec:
-    commandLine: npm run debug
-    component: runtime
-    group:
-      isDefault: true
-      kind: debug
-    workingDir: ${PROJECT_SOURCE}
-  id: debug
-- exec:
-    commandLine: npm test
-    component: runtime
-    group:
-      isDefault: true
-      kind: test
-    workingDir: ${PROJECT_SOURCE}
-  id: test
-components:
-- container:
-    args:
-    - tail
-    - -f
-    - /dev/null
-    endpoints:
-    - name: http-node
-      targetPort: 3000
-    - exposure: none
-      name: debug
-      targetPort: 5858
-    env:
-    - name: DEBUG_PORT
-      value: "5858"
-    image: registry.access.redhat.com/ubi8/nodejs-16:latest
-    memoryLimit: 1024Mi
-    mountSources: true
-  name: runtime
+schemaVersion: 2.2.0
 metadata:
-  description: Stack with Node.js 16
-  displayName: Node.js Runtime
-  icon: https://nodejs.org/static/images/logos/nodejs-new-pantone-black.svg
-  language: JavaScript
-  name: odo-app
-  projectType: Node.js
-  tags:
-  - Node.js
-  - odo
-  - ubi8
+  name: nodejs
   version: 2.1.1
-schemaVersion: 2.1.0
-starterProjects:
-- git:
-    remotes:
-      origin: https://github.com/a-hema/odo-app.git
-  name: nodejs-starter
+  displayName: Node.js Runtime
+  description: Stack with Node.js 16
+  tags: ["Node.js", "Express", "ubi8"]
+  projectType: "Node.js"
+  language: "JavaScript"
+  attributes:
+    alpha.dockerimage-port: 3001
+  provider: Red Hat
+  supportUrl: https://github.com/devfile-samples/devfile-support#support-information
+parent:
+  id: nodejs
+  registryUrl: "https://registry.devfile.io"
+components:
+  - name: image-build
+    image:
+      imageName: nodejs-image:latest
+      dockerfile:
+        uri: Dockerfile
+        buildContext: .
+        rootRequired: false
+  - name: kubernetes-deploy
+    attributes:
+      deployment/replicas: 1
+      deployment/cpuLimit: "100m"
+      deployment/cpuRequest: 10m
+      deployment/memoryLimit: 100Mi
+      deployment/memoryRequest: 50Mi
+      deployment/container-port: 3001
+    kubernetes:
+      uri: deploy.yaml
+      endpoints:
+      - name: http-3001
+        targetPort: 3001
+        path: /
+commands:
+  - id: build-image
+    apply:
+      component: image-build
+  - id: deployk8s
+    apply:
+      component: kubernetes-deploy
+  - id: deploy
+    composite:
+      commands:
+        - build-image
+        - deployk8s
+      group:
+        kind: deploy
+        isDefault: true

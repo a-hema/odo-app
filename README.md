@@ -2,6 +2,8 @@
 
 This is a sample starter project that provides you with a basic Express app and a sample test in a `/test` sub directory. This sample project uses `Express v4.17.x` and enables health checking and application metrics out of the box. You can override or enhance the following endpoints by configuring your own health checks in your application.
 
+http://odo-sample-app.apps-crc.testing/
+
 ## Health checking
 
 Health-checking enables the cloud platform to determine the `readiness` and `liveness` of your application.
